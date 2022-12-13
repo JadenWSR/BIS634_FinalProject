@@ -1,0 +1,251 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Word Clouds</h1>
+<h2>Research Question: </h2>
+<h2>What are the most common words in ......?</h2>
+<h3>Tweets with Different Sentiment</h3>
+<select class="form-control" id ='sentiData'>
+    <option value="" selected disabled>---- Select a Sentiment ----</option>
+    <option value="all">All Sentiments</option>
+    <option value="negative">Negative</option>
+    <option value="neutral">Neutral</option>
+    <option value="positive">Positive</option>
+</select>
+<div id="wordcloud_senti">
+    <div id="loading">
+        <center><img src="{{url_for('static', filename='loading.gif')}}" width = 50% /></center>
+      </div>
+</div>
+
+<br>
+<br>
+<h3>Tweets about Different Vaccine Brands</h3>
+<select class="form-control" id ='VaccineData'>
+    <option value="" selected disabled>---- Select a COVID-19 Vaccine Brand ----</option>
+    <option value="all">All Vaccines</option>
+    <option value="pfizer">Pfizer</option>
+    <option value="moderna">Moderna</option>
+    <option value="biontech">Biontech</option>
+    <option value="covaxin">Covaxin</option>
+    <option value="sinopharm">Sinopharm</option>
+    <option value="sinovac">Sinovac</option>
+    <option value="oxford">Oxford</option>
+    <option value="astrazeneca">Astrazeneca</option>
+    <option value="sputnik">Sputnik</option>
+</select>
+<div id="wordcloud_vax">
+</div>
+<br>
+<br>
+<h3>Tweets in Different Countries</h3>
+<select class="form-control" id ='CountryData'>
+    <option value="" selected disabled>---- Select a Country ----</option>
+    <option value="all">All Countries</option>
+    <option value="usa">United States</option>
+    <option value="canada">Canada</option>
+    <option value="india">India</option>
+    <option value="uk">United Kingdom</option>
+    <option value="germany">Germany</option>
+    <option value="spain">Spain</option>
+    <option value="pakistan">Pakistan</option>
+    <option value="brazil">Brazil</option>
+    <option value="russia">Russia</option>
+    <option value="italy">Italy</option>
+    <option value="australia">Australia</option>
+    <option value="france">France</option>
+    <option value="argentina">Argentina</option>
+    <option value="uae">United Arab Emirates</option>
+    <option value="israel">Israel</option>
+    <option value="mexico">Mexico</option>
+    <option value="japan">Japan</option>
+</select>
+<div id="wordcloud_country"></div>
+<br>
+<div class="j1">
+    <center><h1 class = "ymca-title">Findings and Limitations</h1></center>
+    <h2 class = "ymca-title">Main Findings</h2>
+  <ol>
+    <li>
+        <p class="ymca-intro">"Ontario" and "Toronto" appeared on the word cloud for negative tweets.
+            This matched the EDA result that tweets in Canada have the lowest average sentiment score.. </p>
+    </li>
+    <li>
+        <p class="ymca-intro">It seems that all brands of vaccines have positive feedback.
+            "good" and "effective" appeared on all word clouds for different vaccine brands. </p>
+    </li>
+    <li>
+        <p class="ymca-intro">It's interesting to point out the Japan is the only country whose word cloud has nothing to do with itself.
+            Everything shown on Japan's word cloud is relevant to the US (e.g. US politicians' names).</p>
+    </li>
+   </ol>
+   <h2 class = "ymca-title">Limitations</h2>
+  <ol>
+    <li>
+        <p class="ymca-intro">Most neutral tweets are announcement tweets, which largely increase the word frequency of neutral terms. </p>
+    </li>
+    <li>
+        <p class="ymca-intro">The user location may not be their actual location. The results may be biased.</p>
+    </li>
+   </ol>
+    </div>
+
+
+
+<style>
+    #wordcloud_vax {
+    width: 100%;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+    }
+    #wordcloud_senti {
+    width: 100%;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+    }
+    #wordcloud_country {
+    width: 100%;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+    }
+</style> 
+
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> 
+<script>
+    var options = $('#CountryData option');
+    var arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
+    arr.sort(function(o1, o2) { return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0; });
+    options.each(function(i, o) {
+      o.value = arr[i].v;
+      $(o).text(arr[i].t);
+    });
+</script>
+
+<script>
+$('#loading').show();
+</script>
+
+<script>
+    anychart.onDocumentReady(async function () {
+        // create a tag (word) cloud chart
+        var chart1 = anychart.tagCloud();
+        fetch(`/wordcloud_api/senti/all`)
+        .then(response => response.json())
+            .then(data => {
+            $('#loading').hide();
+            chart1.data(data);       
+            // set a chart title
+            var title1 = chart1.title();
+            title1.enabled(true);
+            title1.fontSize(30);
+            title1.text('50 Most Common Words for All Tweets');
+    
+            // set an array of angles at which the words will be laid out
+            chart1.angles([0]);
+        });
+      // refresh the chart on change
+      $('#sentiData').change(function(){
+            console.log(document.getElementById('sentiData').value)
+            let senti= document.getElementById('sentiData').value;
+            fetch(`/wordcloud_api/senti/${senti}`)
+            .then(response => response.json())
+                .then(data => {
+                chart1.data(data);       
+                // set a chart title
+                var title1 = chart1.title();
+                title1.enabled(true);
+                title1.fontSize(30);
+                title1.text(`50 Most Common Words for ${senti} Tweets`);
+            });
+        });
+        // display the word cloud chart
+        chart1.container("wordcloud_senti");
+        chart1.draw();
+    })
+    
+</script>
+
+<script>
+anychart.onDocumentReady(async function () {
+    // create a tag (word) cloud chart
+    var chart = anychart.tagCloud();
+    fetch(`/wordcloud_api/all`)
+    .then(response => response.json())
+        .then(data => {
+        chart.data(data);       
+        // set a chart title
+        var title = chart.title();
+        title.enabled(true);
+        title.fontSize(30);
+        title.text('50 Most Common Words for All COVID-19 Vaccines');
+
+        // set an array of angles at which the words will be laid out
+        chart.angles([0]);
+    });
+  // refresh the chart on change
+  $('#VaccineData').change(function(){
+        console.log(document.getElementById('VaccineData').value)
+        let vax_name= document.getElementById('VaccineData').value;
+        fetch(`/wordcloud_api/${vax_name}`)
+        .then(response => response.json())
+            .then(data => {
+            chart.data(data);       
+            // set a chart title
+            var title = chart.title();
+            title.enabled(true);
+            title.fontSize(30);
+            title.text(`50 Most Common Words for ${vax_name} COVID-19 Vaccine`);
+        });
+    });
+    // display the word cloud chart
+    chart.container("wordcloud_vax");
+    chart.draw();
+})
+
+</script>
+
+<script>
+    anychart.onDocumentReady(async function () {
+        // create a tag (word) cloud chart
+        var chart2 = anychart.tagCloud();
+        fetch(`/wordcloud_api/country/all`)
+        .then(response => response.json())
+            .then(data => {
+            chart2.data(data);       
+            // set a chart title
+            var title2 = chart2.title();
+            title2.enabled(true);
+            title2.fontSize(30);
+            title2.text('50 Most Common Words (All Countries)');
+    
+            // set an array of angles at which the words will be laid out
+            chart2.angles([0]);
+        });
+      // refresh the chart on change
+      $('#CountryData').change(function(){
+            console.log(document.getElementById('CountryData').value)
+            let country= document.getElementById('CountryData').value;
+            fetch(`/wordcloud_api/country/${country}`)
+            .then(response => response.json())
+                .then(data => {
+                chart2.data(data);       
+                // set a chart title
+                var title2 = chart2.title();
+                title2.enabled(true);
+                title2.fontSize(30);
+                title2.text('50 Most Common Words');
+            });
+        });
+        // display the word cloud chart
+        chart2.container("wordcloud_country");
+        chart2.draw();
+    })
+    
+</script>
+  
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="j1">
+  <center><h1 class = "ymca-title">Kaggle COVID-19 All Vaccines Tweets Dataset</h1></center>
+  <a href="https://www.kaggle.com/datasets/gpreda/all-covid19-vaccines-tweets">
+    <img src="{{url_for('static', filename='kaggle_vaccine_tweets.png')}}" width=100%/></a>
+  <br>
+  <br>
+  <h3>This dataset contains tweets about the COVID-19 vaccines used in the entire world, with the following vaccines: </h3>
+    <ul>
+      <li>Pfizer/BioNTech</li>
+      <li>Sinopharm</li>
+      <li>Sinovac</li>
+      <li>Moderna</li>
+      <li>Oxford/AstraZeneca</li>
+      <li>Covaxin</li>
+      <li>Sputnik V</li>
+    </ul>
+  </div>
+  <h1>About this Dataset......</h1>
+
+  <section class="accordion">
+    <input type="checkbox" name="collapse1" id="handle1">
+    <h2 class="handle">
+      <label for="handle1">Basic Information</label>
+    </h2>
+    <div class="content">
+      <h3>How I acquired it?</h3>
+      <p>I downloaded this dataset directly from <a href="https://www.kaggle.com/datasets/gpreda/all-covid19-vaccines-tweets">Kaggle</a>.
+        The dataset is in .csv format.</p>
+      <h3>Data Collection</h3>
+      <p>The data is collected from Twitter API using tweepy Python package. For each of the vaccine brands, the data provider used relevant search terms
+        (most frequently used in Twitter to refer to the respective vaccine) to acquire data.</p>
+
+      <h3>The FAIRness of the data provider</h3>
+      <p>The dataset is following the FAIRness principle. The data was well-annotated with metadata and has a clear license.</p>
+      <img src="{{url_for('static', filename='FAIR.png')}}" width=100%/>
+            
+      <h3>The Terms of Use</h3>
+        <p>This is a public dataset on Kaggle, with <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0: Public Domain</a>.
+          I can easily access to the dataset via Kaggle, without applying for permissions.
+          There's no restriction. There's no certain types of analyses people cannot do with this dataset.</p>
+    </div>
+  </section>
+
+  <section class="accordion">
+    <input type="checkbox" name="collapse2" id="handle2">
+    <h2 class="handle">
+      <label for="handle2">Data Description</label>
+    </h2>
+    <div class="content">
+      <p>The dataset has <strong>228207</strong> rows and <strong>16 </strong> columns.</p>
+      <p>We only need few out of 16 columns. However, there are lots of missing data and contents that need to be preprocessed.</p>
+      <p>Here is an overview of the dataset:</p>
+      <center><img src="{{url_for('static', filename='df.png')}}" width=100%/></center>
+      
+
+  </div>
+</section>
+
+  <section class="accordion">
+    <input type="checkbox" name="collapse3" id="handle3">
+    <h2 class="handle">
+      <label for="handle3">Why is it interesting?</label>
+    </h2>
+    <div class="content">
+      <iframe src="https://ourworldindata.org/explorers/coronavirus-data-explorer?zoomToSelection=true&facet=none&uniformYAxis=0&pickerSort=asc&pickerMetric=location&hideControls=true&Metric=Vaccine+doses&Interval=7-day+rolling+average&Relative+to+Population=false&Color+by+test+positivity=false&country=~OWID_WRL"
+      loading="lazy" style="width: 100%; height: 600px; border: 0px none;"></iframe>
+      <p>The COVID-19 pandemic keeps affecting our lives in the past few years. Vaccinations are essential to protect ourselves from COVID,
+        however, some people may hesitate of taking the vaccine, others may suffer from averse effects after taking the vaccine.
+        As the vaccination rate gets higher and higher, how people think about vaccines and their feedback after taking the vaccines are worth
+        looking at. It is also interesting to analyze the variations in the sentiment with respect to time, vaccine, and country.</p>
+    </div>
+  </section>
+
+    <section class="accordion">
+      <input type="checkbox" name="collapse4" id="handle4">
+      <h2 class="handle">
+        <label for="handle4">Data Cleaning and Preprocessing</label>
+      </h2>
+      <div class="content">
+        <ol>
+          <li><p>Remove missing/duplicating data.</p></li>
+          <li><p>Standardize the date column into 'yyyy-mm-dd' format.</li>
+          <li><p>Remove URLs, hashtags, emojis, symbols, and punctuations in the text column, and change each row to lowercase.</p></li>
+          <li><p>Tokenize the text column and remove stopwords.</p></li>
+          <li><p><strong>Get sentiment labels for all tweets using the classification model.</strong></p></li>
+        </ol>
+      </div>
+    </section>
+    <section class="accordion">
+    <input type="checkbox" name="collapse5" id="handle5">
+    <h2 class="handle">
+      <label for="handle5">EDA</label>
+    </h2>
+    <div class="content">
+      <h3>After adding the sentiment labels, we can do some exploratory data analysis:</h3>
+      <div id="SentimentBarPlot"></div>
+      <p><strong></strong></p>
+
+      <div id="VaccineBarPlot"></div>
+      <div id="CountryBarPlot"></div>
+      <p><strong>Note: The results might be misleading since the sample size for each vaccine
+        brands/countries varies.</strong></p>
+    </div>
+  </section>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    let data = [{
+            "x": ["Neutral", "Positive", "Negative"],
+            "y": [0.703784, 0.159788, 0.136428],
+            "text":[81677, 18544, 15833],
+            "type": "bar",
+            "textposition": 'auto',
+            "hoverinfo": 'y',
+            "marker": {
+              color: ['darkblue', 'orange', 'green']
+            }
+        }];
+    let layout = {
+      "title": "Sentiment Distribution",
+      "font":{
+        family: 'Raleway, sans-serif',
+        size:20
+      }
+    };
+    $(() => {
+        // everything here happens only after the page is loaded
+        Plotly.newPlot("SentimentBarPlot", data, layout);
+    });
+</script>
+
+<script>
+  let data1 = [{
+          "x": ['Covaxin','Sinopharm','Sinovac','Moderna','Pfizer','Biontech','Oxford','Astrazeneca','Sputnik'],
+          "y": [0.07685582880383139, 0.06595710369295275, 0.01812849906691549, 0.02271381189291637,
+          0.023263770099213137, 0.11003236245954692, 0.05583543240973971, -0.027235850878887385, 0.00478885502829778],
+          "type": "bar",
+          "hoverinfo": 'y',
+          "marker": {
+            color: ['#93fbae', '#8a85cd', '#d8c75b','#6e1268','#fa2454','#05cb2c', '#8dab61', '#0ab067']
+          }
+      }];
+  let layout1 = {
+    "title": "Average Sentiment of Vaccine Brands",
+    "font":{
+      family: 'Raleway, sans-serif',
+      size:20
+    }
+  };
+  $(() => {
+      // everything here happens only after the page is loaded
+      Plotly.newPlot("VaccineBarPlot", data1, layout1);
+  });
+</script>
+
+<script>
+  let data2 = [{
+          "x": ['India','USA','Canada','Germany','Spain','Pakistan','UK','Brazil','Russia',
+          'Italy','Australia','France','Argentina','UAE','Israel','Mexico','Japan'],
+          "y": [0.035745356886182245,  0.063245, -0.2668943644791413, 0.0416, 0.0072992700729927005,
+          0.07222222222222222, 0.067017, -0.0967741935483871, 0.06998654104979811, 0.010810810810810811,
+          -0.11244979919678715, 0.01107011070110701, -0.011627906976744186, 0.05844155844155844, -0.03731343283582089,
+          0.020618556701030927, -0.02608695652173913],
+          "type": "bar",
+          "marker":{
+            color: ["#74bf8b","#9721fc", "#3367d3","#df9c81","#2f79b5", "#95148e", "#0d8b22",
+            "#ac1e85", "#430faa", "#92b144", "#00dbc2", "#7eacc1", "#070f65", "#366ef9",
+            "#fba6db", "#f7e1fb", "#e57986"]
+          },
+          "hoverinfo": 'y',
+      }];
+  let layout2 = {
+    "title": "Average Sentiment of Countries",
+    "font":{
+      family: 'Raleway, sans-serif',
+      size:20
+    }
+  };
+  $(() => {
+      // everything here happens only after the page is loaded
+      Plotly.newPlot("CountryBarPlot", data2, layout2);
+  });
+</script>
+
+{% endblock %}

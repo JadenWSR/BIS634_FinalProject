@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Sentiment Classification Model</h1>
+<br>
+<div class="j1">
+  <form method="get" id="text-form" action = '/model_result'>
+    <textarea class="form-control" placeholder="Input some texts to start sentiment classification" id="user_text" style="height: 100px" name ="user_text"></textarea>
+    <br>
+    <button type="submit" id="btnClassification" class = "button3">Submit</button>
+  </form>
+</div>
+{% if request.endpoint == 'model_result' %}
+  <h2> The predicted sentiment of your input text is:<br/><center><strong><h1>{{dict['Predicted Sentiment'].capitalize()}}</strong></h1></center></h2>
+  <br>
+  <h2>Probability Breakdown</h2>
+  <table style="width:100%" id = 'Table'>
+    <tr>
+    <th>Negative</th>
+    <th>Neutral</th>
+    <th>Positive</th>
+  </tr>
+  <tr>
+    <td><strong>{{dict['negative probability']}}</strong></td>
+    <td><strong>{{dict['neutral probability']}}</strong></td>
+    <td><strong>{{dict['positive probability']}}</strong></td>
+  </tr>
+  </table>
+
+{% endif %}
+<br>
+<h1>About this Model......</h1>
+<section class="accordion">
+  <input type="checkbox" name="collapse1" id="handle1">
+  <h2 class="handle">
+    <label for="handle1">How is it trained?</label>
+  </h2>
+  <div class="content">
+    <h3>Training and Validation Data</h3>
+    <p>Since the vaccine dataset is not labeled, I used another dataset to train and validate my model.
+      <img src="{{url_for('static', filename='kaggle_train.png')}}" width=100%/>
+      I downloaded the dataset directly from <a href="https://www.kaggle.com/datasets/maxjon/complete-tweet-sentiment-extraction-data">Kaggle</a>.
+      The dataset is in .csv format, and follows the FAIRness principle. </p>
+    <p>The training set contains 90% of the data, while the validation set holds the rest 10%.</p>
+    <h3>Data Cleaning and Preprocessing</h3>
+    <p>This dataset has several columns, however, I only need the `text` column and the `new_sentiment` column to train the model.</p>
+    <p>text: Contains 31329 raw tweets.</p>
+    <p>new_sentiment: Contains the corresponding sentiment labels for 31329 tweets.</p>
+    <p>The data cleaning and preprocessing procedures are exactly the same as the procedures for the vaccine tweets dataset. I'll skip this for now.
+      Please refer to the data cleaning section on the Data page for more information.</p>
+    <p>After data cleaning and preprocessing, it's time to train the model.</p>
+    <h3>Starting with a pre-trained model called BERT</h3>
+      <p>BERT stands for “Bidirectional Encoder Representation with Transformers”, and it is a pre-trained language model.
+        To put it in simple words, BERT extracts patterns or representations from the data or word embeddings by passing them through an encoder. 
+        BERT falls into a self-supervised model. That means, it can generate inputs and labels from the raw corpus without being explicitly programmed by humans. </p>
+      <p>My model is built from the BERT model using PyTorch. I adjusted the model parameters and fine-tuned them with the labeled tweets dataset.</p>
+  </div>
+</section>
+
+<section class="accordion">
+  <input type="checkbox" name="collapse2" id="handle2">
+  <h2 class="handle">
+    <label for="handle2">Model Performance</label>
+  </h2>
+  <div class="content">
+    <h3>Training Accuracy: <strong>75%</strong>; Training Loss: <strong>0.59</strong></h3>
+    <h3>Validation Accuracy: <strong>80%</strong>; Validation Loss: <strong>0.48</strong></h3>
+    <h3>Confusion Matrix</h3>
+    <center><img src="{{url_for('static', filename='confusion_matrix.png')}}" width=40%/></center>
+  </div>
+</section>
+
+
+{% endblock %}

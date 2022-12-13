@@ -1,0 +1,162 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1>Timeseries Analysis</h1>
+    <h2>Research Questions:</h2>
+    <h2>- How does the sentiment change over time? <br/>- Do they have a common trend?<br/>- Anything sepecial?</h2>
+    <br>
+    <h2>1. Overall Sentiment VS Time</h2>
+    <h3>Comparison among COVID-19 Vaccine Brands</h3>
+    <select class="form-control" id ='VaccineData'>
+        <option value="" selected disabled>---- Select a COVID-19 Vaccine Brand ----</option>
+        <option value="all">All Vaccines</option>
+        <option value="pfizer">Pfizer</option>
+        <option value="moderna">Moderna</option>
+        <option value="biontech">Biontech</option>
+        <option value="covaxin">Covaxin</option>
+        <option value="sinopharm">Sinopharm</option>
+        <option value="sinovac">Sinovac</option>
+        <option value="oxford">Oxford</option>
+        <option value="astrazeneca">Astrazeneca</option>
+        <option value="sputnik">Sputnik</option>
+    </select>
+    <div id="varianceVStime"></div>
+
+    <br>
+    <h3>Comparison among Countries</h3>
+    <select class="form-control" id ='CountryData'>
+        <option value="" selected disabled>---- Select a Country ----</option>
+        <option value="all">All Countries</option>
+        <option value="usa">United States</option>
+        <option value="canada">Canada</option>
+        <option value="india">India</option>
+        <option value="uk">United Kingdom</option>
+        <option value="germany">Germany</option>
+        <option value="spain">Spain</option>
+        <option value="pakistan">Pakistan</option>
+        <option value="brazil">Brazil</option>
+        <option value="russia">Russia</option>
+        <option value="italy">Italy</option>
+        <option value="australia">Australia</option>
+        <option value="france">France</option>
+        <option value="argentina">Argentina</option>
+        <option value="uae">United Arab Emirates</option>
+        <option value="israel">Israel</option>
+        <option value="mexico">Mexico</option>
+        <option value="japan">Japan</option>
+    </select>
+    <div id="varianceVStimeCountry"></div>
+    <br>
+    <h2>2. Sentiment Count VS Time</h2>
+    <select class="form-control" id ='sentimentData'>
+        <option value="" selected disabled>---- Select a Sentiment ----</option>
+        <option value="all">All Sentiments</option>
+        <option value="negative">Negative</option>
+        <option value="neutral">Neutral</option>
+        <option value="positive">Positive</option>
+    </select>
+    <div id="SDT"></div>
+    <h3>Important Dates:</h3>
+    <p>2021-03-01: J&J authorization</p>
+    <p>2021-04-15: Vaccine eligibility update</p>
+    <p>2021-04-21: Fear of supply outstripping demand & CDC discussion of J&J bloodclots</p>
+    <p>2021-06-29: Discussion of vaccine protection against delta variant</p>
+    <p>2021-10-14: FDA approves expanded age indication for Flucelvax Quadrivalent (Seqirus Inc)</p>
+    <p>2021-10-22: Moderna, J&J booster available for high-risk</p>
+    <p>2021-11-03: Pfizer vaccine approved for children 5+</p>
+    <p>2021-11-20: Boosters available for all 18+ </p>
+    <p><a href="https://doh.wa.gov/sites/default/files/2022-02/348-862-VaccineTimeline.pdf">Reference</a></p>
+
+    <div class="j1">
+        <center><h1 class = "ymca-title">Findings and Limitations</h1></center>
+        <h2 class = "ymca-title">Main Findings</h2>
+      <ol>
+        <li>
+            <p class="ymca-intro">As a common trend in all vaccines, we can see that in the initial stages the sentiment seems to be on an extreme end.
+                The positive extreme can be attributed to the celebration regarding the discovery of a vaccine whereas the negative extreme seems to be a
+                result of popular rumors regarding the credibility of the vaccines.</p>
+        </li>
+        <li>
+            <p class="ymca-intro">Neutral is the dominant sentiment, but it could be argued that Positive & Negative sentiments were fairly equal.</p>
+        </li>
+        <li>
+            <p class="ymca-intro">The variance of sentiment in the countries seems to be erratic, and there is no common trend. This should be explained
+                by the different policies of the respective countries.</p>
+        </li>
+       </ol>
+       <h2 class = "ymca-title">Limitations</h2>
+      <ol>
+        <li>
+            <p class="ymca-intro">Lack of data. Some vaccines/countries don't have enough data(Average sentiment -1, 0, 1).</p>
+        </li>
+        <li>
+            <p class="ymca-intro">Wrong sentiment classified by the model. (e.g. The vaccine is somewhat effective but harmful.)</p>
+        </li>
+       </ol>
+        </div>
+      
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> 
+<script>
+    $('#sentimentData').change(function(){
+        console.log(document.getElementById('sentimentData').value)
+        let senti= document.getElementById('sentimentData').value;
+    fetch(`/timeseries_api/SDT/${senti}`)
+    .then(response => response.json())
+    .then(function (data) {Plotly.newPlot("SDT", data, {
+            "title": `Count VS Time (${senti})`
+        })
+    })
+    .change();
+})       
+</script>
+<script>
+var options = $('#CountryData option');
+var arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
+arr.sort(function(o1, o2) { return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0; });
+options.each(function(i, o) {
+  o.value = arr[i].v;
+  $(o).text(arr[i].t);
+});
+</script>
+
+<script>
+    var options = $('#VaccineData option');
+    var arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
+    arr.sort(function(o1, o2) { return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0; });
+    options.each(function(i, o) {
+      o.value = arr[i].v;
+      $(o).text(arr[i].t);
+    });
+    </script>
+
+<script>
+    $('#VaccineData').change(function(){
+        console.log(document.getElementById('VaccineData').value)
+        let vax_name= document.getElementById('VaccineData').value;
+    fetch(`/timeseries_api/varianceVStime/${vax_name}`)
+    .then(response => response.json())
+    .then(function (data) {Plotly.newPlot("varianceVStime", data, {
+            "title": `Overall Sentiment VS Time (${vax_name})`
+        })
+    })
+    .change();
+})
+</script>
+
+<script>
+    $('#CountryData').change(function(){
+        console.log(document.getElementById('CountryData').value)
+        let country= document.getElementById('CountryData').value;
+    fetch(`/timeseries_api/varianceVStime_Country/${country}`)
+    .then(response => response.json())
+    .then(function (data) {Plotly.newPlot("varianceVStimeCountry", data, {
+            "title": `Overall Sentiment VS Time (${country})`
+        })
+    })
+    .change();
+})
+</script>
+
+{% endblock %}

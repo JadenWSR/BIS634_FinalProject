@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<div class="jumbotron">
+    <center><h1 class = "main-title">YALE BIS634 Final Project</h1></center>
+    <p class="lead">The project is mainly about analyzing the COVID-19 vaccine tweets dataset.  </p>
+
+    <p class="lead">
+      This local Web application is built with Python flask, along with some HTML and CSS.</p>
+      <p class="lead">There are 7 app routes</p>
+    <ul>
+    <li>@app.route('/'): Home Page</li>
+    <li>@app.route('/data'): Data Page.</li>
+    <li>@app.route('/wordcloud'): Word Cloud Analysis Page.</li>
+    <li>@app.route('/timeseries'): Timeseries Analysis Page.</li>
+    <li>@app.route('/model_page'): Model Page without Output Result.</li>
+    <li>@app.route('/model_result'): Model Page with Output Result.</li>
+    <li>@app.route('/contact'): Contact Page</li>
+    </ul>
+    <p class="lead">and 7 APIs.</p>
+    <ul>
+    <li>@app.route('/wordcloud_api/&ltstring:vax_name>'): Returns JSON-encoded data generating a word cloud given a vaccine brand.</li>
+    <li>@app.route('/wordcloud_api/senti/&ltstring:senti>'): Returns JSON-encoded data generating a word cloud given a sentiment.</li>
+    <li>@app.route('/wordcloud_api/country/&ltstring:country>'): Returns JSON-encoded data generating a word cloud given a country name.</li>
+    <li>@app.route('/timeseries_api/varianceVStime/&ltstring:vax_name>'): Returns JSON-encoded data generating a timeseries graph given a vaccine brand.</li>
+    <li>@app.route('/timeseries_api/varianceVStime_Country/&ltstring:country>'): Returns JSON-encoded data generating a timeseries graph given a country name.</li>
+    <li>@app.route('/timeseries_api/SDT/&ltstring:senti>'): Returns JSON-encoded data generating a bar graph given a sentiment.</li>
+    <li>@app.route('/model_api/&ltstring:user_text>'): Returns JSON-encoded data generating the predicted results from the model given a user input.</li>
+    </ul>
+  </div>
+{% endblock %}
