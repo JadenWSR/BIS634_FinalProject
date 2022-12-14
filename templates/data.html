@@ -39,8 +39,8 @@
             
       <h3>The Terms of Use</h3>
         <p>This is a public dataset on Kaggle, with <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0: Public Domain</a>.
-          I can easily access to the dataset via Kaggle, without applying for permissions.
-          There's no restriction. There's no certain types of analyses people cannot do with this dataset.</p>
+          I can easily access the dataset via Kaggle, without applying for permissions. There's no restriction.
+          There are no certain types of analyses people cannot do with this dataset.</p>
     </div>
   </section>
 
@@ -51,11 +51,22 @@
     </h2>
     <div class="content">
       <p>The dataset has <strong>228207</strong> rows and <strong>16 </strong> columns.</p>
-      <p>We only need few out of 16 columns. However, there are lots of missing data and contents that need to be preprocessed.</p>
+      <p>We only need <strong>three</strong> columns out of 16 columns, which are text, user_location and date.</p>
+      <p><strong>text</strong>: The complete text of a tweet. Hashtags, emojis and symbols are included.</p>
+      <p><strong>date</strong>: The exact date and time of the tweet.</p>
+      <p><strong>user_location</strong>: The location user selected when tweeting, which is not necessarily the user's actual location.</p>
       <p>Here is an overview of the dataset:</p>
-      <center><img src="{{url_for('static', filename='df.png')}}" width=100%/></center>
-      
-
+      <div class="row">
+        <div class="column">
+          <img src="{{url_for('static', filename='df.png')}}" width=100%/>
+        </div>
+        <div class="column">
+          <img src="{{url_for('static', filename='df2.png')}}" width=100%/>
+        </div>
+      </div>
+      <p>Noticed that there are missing values in the user_location column. This is because not all users will
+        include their locations while tweeting. Since the text and date columns don't have missing values, we will leave the
+        user_location column untouched.</p>
   </div>
 </section>
 
@@ -68,7 +79,7 @@
       <iframe src="https://ourworldindata.org/explorers/coronavirus-data-explorer?zoomToSelection=true&facet=none&uniformYAxis=0&pickerSort=asc&pickerMetric=location&hideControls=true&Metric=Vaccine+doses&Interval=7-day+rolling+average&Relative+to+Population=false&Color+by+test+positivity=false&country=~OWID_WRL"
       loading="lazy" style="width: 100%; height: 600px; border: 0px none;"></iframe>
       <p>The COVID-19 pandemic keeps affecting our lives in the past few years. Vaccinations are essential to protect ourselves from COVID,
-        however, some people may hesitate of taking the vaccine, others may suffer from averse effects after taking the vaccine.
+        however, some people may hesitate of taking the vaccine, others may suffer from side effects after taking the vaccine.
         As the vaccination rate gets higher and higher, how people think about vaccines and their feedback after taking the vaccines are worth
         looking at. It is also interesting to analyze the variations in the sentiment with respect to time, vaccine, and country.</p>
     </div>
@@ -81,7 +92,6 @@
       </h2>
       <div class="content">
         <ol>
-          <li><p>Remove missing/duplicating data.</p></li>
           <li><p>Standardize the date column into 'yyyy-mm-dd' format.</li>
           <li><p>Remove URLs, hashtags, emojis, symbols, and punctuations in the text column, and change each row to lowercase.</p></li>
           <li><p>Tokenize the text column and remove stopwords.</p></li>
@@ -111,8 +121,8 @@
   <script>
     let data = [{
             "x": ["Neutral", "Positive", "Negative"],
-            "y": [0.703784, 0.159788, 0.136428],
-            "text":[81677, 18544, 15833],
+            "y": [0.766300, 0.119416, 0.114284],
+            "text":[174872, 27251, 26080],
             "type": "bar",
             "textposition": 'auto',
             "hoverinfo": 'y',
@@ -136,8 +146,8 @@
 <script>
   let data1 = [{
           "x": ['Covaxin','Sinopharm','Sinovac','Moderna','Pfizer','Biontech','Oxford','Astrazeneca','Sputnik'],
-          "y": [0.07685582880383139, 0.06595710369295275, 0.01812849906691549, 0.02271381189291637,
-          0.023263770099213137, 0.11003236245954692, 0.05583543240973971, -0.027235850878887385, 0.00478885502829778],
+          "y": [0.029003402480518053, -0.0014345619068638269, 0.007984386089425125, 0.013414834263209715, 0.01312617197964104,
+          0.0968405762014284, 0.0506440281030445, -0.019526548080781064, 0.004970678581401843],
           "type": "bar",
           "hoverinfo": 'y',
           "marker": {
@@ -161,10 +171,10 @@
   let data2 = [{
           "x": ['India','USA','Canada','Germany','Spain','Pakistan','UK','Brazil','Russia',
           'Italy','Australia','France','Argentina','UAE','Israel','Mexico','Japan'],
-          "y": [0.035745356886182245,  0.063245, -0.2668943644791413, 0.0416, 0.0072992700729927005,
-          0.07222222222222222, 0.067017, -0.0967741935483871, 0.06998654104979811, 0.010810810810810811,
-          -0.11244979919678715, 0.01107011070110701, -0.011627906976744186, 0.05844155844155844, -0.03731343283582089,
-          0.020618556701030927, -0.02608695652173913],
+          "y": [0.008474764281752634, 0.04877969936964603, -0.2909880564603692, 0.03467406380027739,
+          -0.006134969325153374, 0.062320230105465, 0.08591940713293192, -0.13333333333333333,
+          0.013043478260869565, 0.04326923076923077, -0.11352418558736427, 0.020634920634920634,
+          -0.01680672268907563, 0.1497584541062802, 0.0, -0.006211180124223602,-0.05188679245283019],
           "type": "bar",
           "marker":{
             color: ["#74bf8b","#9721fc", "#3367d3","#df9c81","#2f79b5", "#95148e", "#0d8b22",

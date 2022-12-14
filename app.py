@@ -35,7 +35,7 @@ model.load_state_dict(state_dict)
 
 vax_data = pd.read_csv('model/vax_data_cleaned.csv')
 vax_data['date'] = pd.to_datetime(vax_data['date'], errors='coerce').dt.strftime('%Y-%m-%d')
-vax_data = vax_data.dropna()
+vax_data = vax_data.dropna(subset=['Sentiment'])
 all_vax = ['covaxin', 'sinopharm', 'sinovac', 'moderna', 'pfizer', 'biontech', 'oxford', 'astrazeneca', 'sputnik']
 countries=['india','usa','canada','germany','spain','pakistan','uk','brazil','russia','italy','australia','france','argentina','uae','israel','mexico','japan']
 states = [ 'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA',
@@ -96,7 +96,7 @@ def wordcloud_api(vax_name):
     if vax_name=='all':
         vax_name=vax_data
     else :   
-        vax_name=vax_data[vax_data['text'].str.lower().str.contains(vax_name)]
+        vax_name=vax_data[vax_data['text'].str.lower().str.contains(vax_name, na=False)]
     
     user_text = ' '.join(vax_name['text'])
     url_pattern = re.compile(r'https?://\S+|www\.\S+')
@@ -155,13 +155,13 @@ def wordcloud_api_country(country):
     if country=='all':
         count=vax_data
     elif country == 'usa':
-        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(states))]
+        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(states), na=False)]
     elif country == 'uk':
         loc = ['uk', 'england']
         loc = [rf'\b{x.lower()}\b' for x in loc]
-        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(loc))]
+        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(loc), na=False)]
     else : 
-        count=vax_data[vax_data['user_location'].str.lower().str.contains(country)]
+        count=vax_data[vax_data['user_location'].str.lower().str.contains(country, na=False)]
     
     user_text = ' '.join(count['text'])
     url_pattern = re.compile(r'https?://\S+|www\.\S+')
@@ -195,7 +195,7 @@ def timeseries_api_varianceVStime(vax_name):
     if vax_name=='all':
         vax_name=vax_data
     else :   
-        vax_name=vax_data[vax_data['text'].str.lower().str.contains(vax_name)]
+        vax_name=vax_data[vax_data['text'].str.lower().str.contains(vax_name, na=False)]
 
     temp=pd.DataFrame()
     temp['date'] = sorted(vax_name['date'].unique())
@@ -217,13 +217,13 @@ def timeseries_api_varianceVStime_Country(country):
     if country=='all':
         count=vax_data
     elif country == 'usa':
-        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(states))]
+        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(states), na=False)]
     elif country == 'uk':
         loc = ['uk', 'england']
         loc = [rf'\b{x.lower()}\b' for x in loc]
-        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(loc))]
+        count=vax_data[vax_data['user_location'].str.lower().str.contains('|'.join(loc), na=False)]
     else : 
-        count=vax_data[vax_data['user_location'].str.lower().str.contains(country)]
+        count=vax_data[vax_data['user_location'].str.lower().str.contains(country, na=False)]
 
     temp=pd.DataFrame()
     temp['date'] = sorted(count['date'].unique())
